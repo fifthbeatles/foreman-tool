@@ -70,9 +70,7 @@ func (f *Foreman) Summary(duration time.Duration, hosts []string) {
 		fmt.Println(err)
 		return
 	}
-	var missing_hosts string_list
-	var ok_hosts string_list
-	var error_hosts string_list
+	var missing_hosts, ok_hosts, error_hosts []string
 	if hosts == nil || len(hosts) == 0 {
 		for host, _ := range f.hosts {
 			host_reports, ok := reports[host]
@@ -113,17 +111,17 @@ func (f *Foreman) Summary(duration time.Duration, hosts []string) {
 		}
 	}
 	fmt.Printf("Missing Hosts(%d):\n", len(missing_hosts))
-	sort.Sort(missing_hosts)
+	sort.Strings(missing_hosts)
 	for _, host := range missing_hosts {
 		fmt.Println(host)
 	}
 	fmt.Printf("Error Hosts(%d):\n", len(error_hosts))
-	sort.Sort(error_hosts)
+	sort.Strings(error_hosts)
 	for _, host := range error_hosts {
 		fmt.Println(host)
 	}
 	fmt.Printf("Good Hosts(%d):\n", len(ok_hosts))
-	sort.Sort(ok_hosts)
+	sort.Strings(ok_hosts)
 	for _, host := range ok_hosts {
 		fmt.Println(host)
 	}
@@ -148,27 +146,4 @@ func (f *Foreman) reports(duration time.Duration) (reports map[string][][2]int, 
 		reports[host] = append(reports[host], [2]int{id, status})
 	}
 	return
-}
-
-type string_list []string
-
-func (l string_list) Len() int {
-	if l == nil {
-		return 0
-	}
-	return len(l)
-}
-
-func (l string_list) Less(i, j int) bool {
-	if l == nil {
-		return true
-	}
-	return l[i] <= l[j]
-}
-
-func (l string_list) Swap(i, j int) {
-	if l == nil || i == j {
-		return
-	}
-	l[i], l[j] = l[j], l[i]
 }
